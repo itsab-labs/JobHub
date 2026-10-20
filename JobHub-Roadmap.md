@@ -100,13 +100,13 @@ Variablennamen und Authentifizierung werden an die ausgewählte API angepasst. E
 
 ### ToDos
 
-- [ ] Genau einen Anbieter auswählen: Zugang, Verfügbarkeit für Österreich/Deutschland, Job-ID, Suchparameter und Beispielantwort prüfen.
+- [X] Genau einen Anbieter auswählen: Zugang, Verfügbarkeit für Österreich/Deutschland, Job-ID, Suchparameter und Beispielantwort prüfen.
 - [ ] Limits sowie Vorgaben für Speicherung, Anzeige und Quellenverlinkung in der offiziellen Dokumentation prüfen und knapp festhalten.
-- [ ] Registrierung beziehungsweise API-Zugang abschließen, sofern erforderlich.
-- [ ] Einen manuellen Testaufruf mit einem kleinen Suchumfang ausführen.
-- [ ] API-Client mit explizitem Timeout implementieren.
-- [ ] Fehlenden API-Key vor dem Request mit einer verständlichen Meldung erkennen.
-- [ ] HTTP-Fehler, Timeout und ungültiges JSON als nachvollziehbare Fehler behandeln.
+- [X] Registrierung beziehungsweise API-Zugang abschließen, sofern erforderlich.
+- [X] Einen manuellen Testaufruf mit einem kleinen Suchumfang ausführen.
+- [X] API-Client mit explizitem Timeout implementieren.
+- [X] Fehlenden API-Key vor dem Request mit einer verständlichen Meldung erkennen.
+- [X] HTTP-Fehler, Timeout und ungültiges JSON als nachvollziehbare Fehler behandeln.
 - [ ] Falls vorhanden: Pagination verstehen, erste Seitenbegrenzung bewusst festlegen und dokumentieren.
 - [ ] Nur relevante Ergebnisfelder im Terminal ausgeben; keine Schlüssel, Header oder unbereinigten Request-URLs loggen.
 
@@ -131,7 +131,7 @@ Die Zahl „abgerufen“ ist nicht automatisch die Gesamtzahl der verfügbaren T
 
 - [ ] Erfolgreiche Mock-Antwort liefert die erwarteten Ergebnisse.
 - [ ] Leere Trefferliste liefert eine leere Liste statt eines Fehlers.
-- [ ] HTTP 401/403 wird als Zugangsfehler verständlich gemeldet.
+- [ ] HTTP 410 wird als Zugangsfehler verständlich gemeldet.
 - [ ] HTTP 429 meldet ein Rate Limit; keine endlosen Wiederholungen.
 - [ ] HTTP 500 und Timeout führen zu einem kontrollierten Fehler.
 - [ ] Ungültiges JSON beziehungsweise unerwartete Antwortstruktur wird erkannt.
