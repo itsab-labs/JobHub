@@ -16,4 +16,4 @@ python -m pytest --version
 python main.py
 ```
 
-milestone 2: job retrieval is implemented as well as error handling ()
+milestone 2: job retrieval is implemented as well as error handling

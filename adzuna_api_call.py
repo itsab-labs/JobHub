@@ -32,7 +32,7 @@ def search_jobs_adzuna():
     app_key = os.getenv("ADZUNA_APP_KEY")
 
     if not app_id or not app_key:
-        raise ValueError("Adzuna-Zugangsdaten fehlen in der .env.")
+        raise ValueError("Adzuna credentials are missing from the .env-file.")
 
     url = f"https://api.adzuna.com/v1/api/jobs/{COUNTRY}/search/1"
 
@@ -70,15 +70,15 @@ def search_jobs_adzuna():
     data = response.json()
 
     if not isinstance(data, dict) or not isinstance(data.get("results"), list):
-        raise ValueError("Die API-Antwort enthält keine gültige Jobliste.")
+        raise ValueError("The API response does not contain a valid list of jobs.")
 
     jobs = []
 
     for result in data["results"]:
         if not isinstance(result, dict):
-            raise ValueError("Ein Job muss ein Objekt sein.")
+            raise ValueError("A job needs to be in the dictionary format.")
         elif not result.get("id"):
-            raise ValueError("Ein Job muss eine gültige Job-ID haben.")
+            raise ValueError("A job must have a valid job ID.")
 
         company = get_object(result, "company")
         location = get_object(result, "location")
@@ -108,17 +108,17 @@ def get_text(data, key, *, required=False):
 
     if value is None:
         if required:
-            raise ValueError(f"Pflichtfeld '{key}' fehlt.")
+            raise ValueError(f"Required field '{key}' missing.")
         return None
 
     if not isinstance(value, str):
-        raise ValueError(f"Feld '{key}' muss ein Text sein.")
+        raise ValueError(f"Field '{key}' needs to be a string.")
 
     value = value.strip()
 
     if not value:
         if required:
-            raise ValueError(f"Pflichtfeld '{key}' ist leer.")
+            raise ValueError(f"Required field '{key}' is empty.")
         return None
 
     return value
@@ -131,7 +131,7 @@ def get_object(data, key):
         return {}
 
     if not isinstance(value, dict):
-        raise ValueError(f"Feld '{key}' muss ein Objekt sein.")
+        raise ValueError(f"Field '{key}' needs to be in the dictionary format.")
 
     return value
 
@@ -148,7 +148,7 @@ def get_prediction_flag(data):
         if value in ("1", 1):
             return True
 
-    raise ValueError("Feld 'salary_is_predicted' muss 0 oder 1 enthalten.")
+    raise ValueError("Field 'salary_is_predicted' has to contain 0 or 1.")
 
 #-----------------------------------------
 def get_number(data, key):
@@ -158,6 +158,6 @@ def get_number(data, key):
         return None
 
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(f"Feld '{key}' muss eine Zahl sein.")
+        raise ValueError(f"Field '{key}' needs to be a number.")
 
     return value

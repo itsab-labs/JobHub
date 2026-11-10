@@ -21,18 +21,17 @@ import os
 from adzuna_api_call import search_jobs_adzuna
 from config import *
 
-
 # main ---------------------------------------------------
 if __name__ == '__main__':
     try:
         jobs = search_jobs_adzuna()
 
     except requests.exceptions.Timeout:
-        raise SystemExit("Die Anfrage hat zu lange gedauert.") from None
+        raise SystemExit("The request timed out.") from None
 
     except requests.exceptions.HTTPError as error:
         status = error.response.status_code
-        print(f"HTTP-Fehler: {status}")
+        print(f"HTTP-Error: {status}")
 
         try:
             error_data = error.response.json()
@@ -44,40 +43,37 @@ if __name__ == '__main__':
             string_documentation_adzuna = error_data.get("doc")
 
             if isinstance(description, str):
-                #Zugangsdaten vor der Ausgabe entfernen.
                 for name in ("ADZUNA_APP_ID", "ADZUNA_APP_KEY"):
                     secret = os.getenv(name)
                     if secret:
-                        description = description.replace(secret, "[ENTFERNT]")
+                        description = description.replace(secret, "[REMOVED]")
 
-                print(f"Adzuna Fehlermeldung (Original): {description}")
+                print(f"Adzuna Error Message (Original): {description}")
                 print(f"Documentation: {string_documentation_adzuna}")
 
-
         if status == 400:
-            message = "Ungültige Suchparameter."
+            message = "Invalid search parameters."
         elif status == 404:
-            message = "Ressource nicht gefunden."
+            message = "Ressource not found."
         elif status == 410:
-            message = "Authorisierung fehlgeschlagen."
+            message = "Authorisation failed."
         elif status == 429:
-            message = "API-Limit erreicht. Bitte später erneut versuchen."
+            message = "API rate limit exceeded. Please try again later."
         elif status >= 500:
-            message = "Beim Anbieter ist ein Serverfehler aufgetreten."
+            message = "A server error occurred on the provider's side."
         else:
-            message = "Die API-Anfrage ist fehlgeschlagen."
+            message = "The API request failed."
         raise SystemExit(f"{message} (HTTP-Status: {status})") from None
 
     except requests.exceptions.RequestException:
         raise SystemExit(
-            "Die Anfrage ist fehlgeschlagen oder die Antwort ist kein gültiges JSON."
+            "The request failed or the response is not valid JSON."
         ) from None
 
     except ValueError as error:
         raise SystemExit(str(error)) from None
 
-    print(f"Suche: {JOB_SEARCHED} | Land: {COUNTRY} | Stadt: {LOCATION} | Gehalt:  {SALARY_MIN} ")
-    print(f"Abgerufen: {len(jobs)} Jobs\n")
+    print(f"Job searched: {JOB_SEARCHED} | Country: {COUNTRY} | Town: {LOCATION} | Salary:  {SALARY_MIN} ")
 
     # for job in jobs:
     #     print(f"{job['id']} | {job['title']}")
