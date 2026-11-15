@@ -107,8 +107,8 @@ Variablennamen und Authentifizierung werden an die ausgewählte API angepasst. E
 - [X] API-Client mit explizitem Timeout implementieren.
 - [X] Fehlenden API-Key vor dem Request mit einer verständlichen Meldung erkennen.
 - [X] HTTP-Fehler, Timeout und ungültiges JSON als nachvollziehbare Fehler behandeln.
-- [ ] Falls vorhanden: Pagination verstehen, erste Seitenbegrenzung bewusst festlegen und dokumentieren.
-- [ ] Nur relevante Ergebnisfelder im Terminal ausgeben; keine Schlüssel, Header oder unbereinigten Request-URLs loggen.
+- [X] Falls vorhanden: Pagination verstehen, erste Seitenbegrenzung bewusst festlegen und dokumentieren.
+- [X] Nur relevante Ergebnisfelder im Terminal ausgeben; keine Schlüssel, Header oder unbereinigten Request-URLs loggen.
 
 ### Zielbeispiel
 

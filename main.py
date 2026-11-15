@@ -2,20 +2,12 @@
 Datei: main.py
 
 Status: Version 0.1 pre alpha :-)
-
-Leitlinien fürs Portfolio:
-- Erst korrekt, dann wartbar, dann performant.
-- Speichere Daten – berechne Statistiken.
-- Wenn eine Funktion schwer zu testen ist, hat sie oft zu viele Aufgaben.
-- Nicht vorsorglich aufteilen, sondern Funktionen dann aufteilen, wenn es unübersichtlich wird.
-
-To Do:
-- ersten API Aufruf meistern
 """
 
 # packages from the python universe :-) ----------
 import requests
 import os
+import sys
 
 # own modules ------------------------------------------
 from adzuna_api_call import search_jobs_adzuna
@@ -31,30 +23,28 @@ if __name__ == '__main__':
 
     except requests.exceptions.HTTPError as error:
         status = error.response.status_code
-        print(f"HTTP-Error: {status}")
+        print(f"HTTP-Error: {status}", file=sys.stderr)
 
         try:
             error_data = error.response.json()
         except ValueError:
             error_data = None
+            print("Response is not valid JSON.", file=sys.stderr)
+            print(error.response.text[:1500], file=sys.stderr)
 
         if isinstance(error_data, dict):
+            print("JSON keys:", list(error_data), file=sys.stderr)
             description = error_data.get("display")
-            string_documentation_adzuna = error_data.get("doc")
-
-            if isinstance(description, str):
-                for name in ("ADZUNA_APP_ID", "ADZUNA_APP_KEY"):
-                    secret = os.getenv(name)
-                    if secret:
-                        description = description.replace(secret, "[REMOVED]")
-
-                print(f"Adzuna Error Message (Original): {description}")
-                print(f"Documentation: {string_documentation_adzuna}")
+            documentation = error_data.get("doc")
+            exception = error_data.get("exception")
+            print(f"display: {description!r}", file=sys.stderr)
+            print(f"doc: {documentation!r}", file=sys.stderr)
+            print(f"exception: {exception!r}", file=sys.stderr)
 
         if status == 400:
-            message = "Invalid search parameters."
+            message = "Incorrect parameters"
         elif status == 404:
-            message = "Ressource not found."
+            message = "Resource could not be found"
         elif status == 410:
             message = "Authorisation failed."
         elif status == 429:
@@ -73,16 +63,20 @@ if __name__ == '__main__':
     except ValueError as error:
         raise SystemExit(str(error)) from None
 
-    print(f"Job searched: {JOB_SEARCHED} | Country: {COUNTRY} | Town: {LOCATION} | Salary:  {SALARY_MIN} ")
+    print(f"Job searched:")
+    print(f"{JOB_SEARCHED} | Country: {COUNTRY} | Town: {LOCATION} | Salary:  {SALARY_MIN} ")
+    print(f"Distance (km): {DISTANCE_KM} | Salary_min: {SALARY_MIN} | Full time only: {FULL_TIME_ONLY}")
+    print(f"Sort by: {SORT_BY} | Max days old: {MAX_DAYS_OLD} | Company: {COMPANY}")
 
-    # for job in jobs:
-    #     print(f"{job['id']} | {job['title']}")
-    #     print(f"{job['company']} | {job['location']}")
-    #     print(job["url"])
-    #     print()
+    print()
 
     for job in jobs:
-        for key, value in job.items():
-            print(f"{key}: {value}")
+        if not jobs:
+            print("No matching jobs found.")
+            break
+        print(f"{job['external_id']} | {job['title']}")
+        print(f"{job['company']} | {job['location']}")
+        print(job["url"])
+        print()
 
         print()  # Leerzeile zwischen den Jobs

@@ -20,6 +20,9 @@ from config import (
     DISTANCE_KM,
     SALARY_MIN,
     FULL_TIME_ONLY,
+    SORT_BY,
+    MAX_DAYS_OLD,
+    COMPANY,
 )
 
 
@@ -42,22 +45,23 @@ def search_jobs_adzuna():
         "app_key": app_key,
         "what": JOB_SEARCHED,
         "results_per_page": RESULTS_PER_PAGE,
+        "content-type": "application/json",
     }
 
-    # Optional: Ort und Suchradius
     if LOCATION:
         params["where"] = LOCATION
-
-        if DISTANCE_KM is not None:
-            params["distance"] = DISTANCE_KM
-
-    # Optional: Mindestgehalt
+    if DISTANCE_KM is not None:
+        params["distance"] = DISTANCE_KM
     if SALARY_MIN is not None:
         params["salary_min"] = SALARY_MIN
-
-    # Optional: nur Vollzeit
     if FULL_TIME_ONLY:
         params["full_time"] = "1"
+    if SORT_BY is not None:
+        params["sort_by"] = SORT_BY
+    if MAX_DAYS_OLD is not None:
+        params["max_days_old"] = MAX_DAYS_OLD
+    if COMPANY is not None:
+        params["company"] = COMPANY
 
     response = requests.get(
         url,
