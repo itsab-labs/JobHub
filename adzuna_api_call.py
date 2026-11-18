@@ -5,12 +5,17 @@ Status: Version 0.1 pre alpha :-)
 
 Does: Adzuna API Calls
 """
-
+# packages from the python universe :-) ----------
 import os
 from pathlib import Path
-
 import requests
 from dotenv import load_dotenv
+import sys
+
+# own modules ------------------------------------------
+from errors import JobHubError
+
+
 
 from config import (
     JOB_SEARCHED,
@@ -23,6 +28,7 @@ from config import (
     SORT_BY,
     MAX_DAYS_OLD,
     COMPANY,
+    WHAT_EXCLUDE,
 )
 
 
@@ -35,23 +41,21 @@ def search_jobs_adzuna():
     app_key = os.getenv("ADZUNA_APP_KEY")
 
     if not app_id or not app_key:
-        raise ValueError("Adzuna credentials are missing from the .env-file.")
+        raise JobHubError(source="adzuna", code="missing_credentials")
 
     url = f"https://api.adzuna.com/v1/api/jobs/{COUNTRY}/search/1"
 
-    # Diese Parameter senden wir immer.
     params = {
         "app_id": app_id,
         "app_key": app_key,
         "what": JOB_SEARCHED,
-        "results_per_page": RESULTS_PER_PAGE,
-        "content-type": "application/json",
+        "results_per_page": RESULTS_PER_PAGE
     }
 
     if LOCATION:
         params["where"] = LOCATION
-    if DISTANCE_KM is not None:
-        params["distance"] = DISTANCE_KM
+        if DISTANCE_KM is not None:
+            params["distance"] = DISTANCE_KM
     if SALARY_MIN is not None:
         params["salary_min"] = SALARY_MIN
     if FULL_TIME_ONLY:
@@ -62,27 +66,62 @@ def search_jobs_adzuna():
         params["max_days_old"] = MAX_DAYS_OLD
     if COMPANY is not None:
         params["company"] = COMPANY
+    if WHAT_EXCLUDE is not None:
+        params["what_exclude"] = WHAT_EXCLUDE
 
-    response = requests.get(
-        url,
-        params=params,
-        headers={"Accept": "application/json"},
-        timeout=10,
-    )
+    try:
+        response = requests.get(
+            url,
+            params=params,
+            headers={"Accept": "application/json"},
+            timeout=10,
+        )
+        response.raise_for_status()
 
-    response.raise_for_status()
+    except requests.exceptions.Timeout:
+        raise JobHubError(source="adzuna", code="timeout")
+
+    except requests.exceptions.HTTPError as error:
+        status = error.response.status_code
+
+        try:
+            error_data = error.response.json()
+        except ValueError:
+            error_data = None
+            JobHubError(source="adzuna", code="adzuna_non_valid_json")
+            print(error.response.text[:1500], file=sys.stderr)
+
+        if isinstance(error_data, dict):
+            print("JSON keys:", list(error_data), file=sys.stderr)
+            description = error_data.get("display")
+            documentation = error_data.get("doc")
+            exception = error_data.get("exception")
+            print(f"display: {description!r}", file=sys.stderr)
+            print(f"doc: {documentation!r}", file=sys.stderr)
+            print(f"exception: {exception!r}", file=sys.stderr)
+
+        raise JobHubError(
+            source="adzuna", code=status,
+        )
+
+    except requests.exceptions.RequestException:
+        raise JobHubError(source="adzuna", code="request_failed_or_non_valid")
+
+    except ValueError as error: #noch in JobHubError aufnehmen
+        raise SystemExit(str(error)) from error
+
     data = response.json()
 
     if not isinstance(data, dict) or not isinstance(data.get("results"), list):
-        raise ValueError("The API response does not contain a valid list of jobs.")
+        raise JobHubError(source="adzuna", code="api_repsonse_not_valid_list_of_jobs")
 
     jobs = []
 
     for result in data["results"]:
         if not isinstance(result, dict):
-            raise ValueError("A job needs to be in the dictionary format.")
+            raise JobHubError(source="adzuna", code="dict_format_necessary")
         elif not result.get("id"):
-            raise ValueError("A job must have a valid job ID.")
+            raise JobHubError(source="adzuna", code="valid_job_id_necessary")
 
         company = get_object(result, "company")
         location = get_object(result, "location")
@@ -112,17 +151,17 @@ def get_text(data, key, *, required=False):
 
     if value is None:
         if required:
-            raise ValueError(f"Required field '{key}' missing.")
+            raise ValueError(f"Required field '{key}' missing.") #noch übersetzen
         return None
 
     if not isinstance(value, str):
-        raise ValueError(f"Field '{key}' needs to be a string.")
+        raise JobHubError(source="adzuna", code="adzuna_field_not_string", field=key)
 
     value = value.strip()
 
     if not value:
         if required:
-            raise ValueError(f"Required field '{key}' is empty.")
+            raise JobHubError(source="adzuna", code="adzuna_required_field_is_empty", field=key)
         return None
 
     return value
@@ -135,13 +174,13 @@ def get_object(data, key):
         return {}
 
     if not isinstance(value, dict):
-        raise ValueError(f"Field '{key}' needs to be in the dictionary format.")
+        raise ValueError(f"Field '{key}' needs to be in the dictionary format.") #noch übersetzen
 
     return value
 
 #-----------------------------------------
 def get_prediction_flag(data):
-    value = data.get("salary_is_predicted")
+    value = data.get("salary_is_predicted") #noch übersetzen
 
     if value is None:
         return None
@@ -152,7 +191,7 @@ def get_prediction_flag(data):
         if value in ("1", 1):
             return True
 
-    raise ValueError("Field 'salary_is_predicted' has to contain 0 or 1.")
+    raise ValueError("Field 'salary_is_predicted' has to contain 0 or 1.") #noch übersetzen
 
 #-----------------------------------------
 def get_number(data, key):
@@ -162,6 +201,6 @@ def get_number(data, key):
         return None
 
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(f"Field '{key}' needs to be a number.")
+        raise ValueError(f"Field '{key}' needs to be a number.") #noch übersetzen
 
     return value
