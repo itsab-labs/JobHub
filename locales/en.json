@@ -15,6 +15,10 @@
   "adzuna_non_valid_json": "The response is not valid JSON.",
   "adzuna_field_not_string": "Field '{field}' needs to be a string.",
   "adzuna_required_field_is_empty": "Field '{field}' is required but is empty.",
+  "adzuna_required_field_missing": "Field '{field}' is required but is missing.",
+  "adzuna_field_not_dictionary": "Field '{field}' needs to be in the dictionary format.",
+  "adzuna_field_salary_is_predicted_not_boolean": "Field 'salary_is_predicted' needs to be a boolean value (0 or 1).",
+  "adzuna_field_not_number": "Field '{field}' needs to be a number.",
 
   "__comment-002": "----- Translations for job output -----",
   "job_searched_criteria": "The following search criteria were used:",

@@ -16,6 +16,10 @@ class JobHubError(Exception):
             "adzuna_non_valid_json": "adzuna_non_valid_json",
             "adzuna_field_not_string": "adzuna_field_not_string",
             "adzuna_required_field_is_empty": "adzuna_required_field_is_empty",
+            "adzuna_required_field_missing": "adzuna_required_field_missing",
+            "adzuna_field_not_dictionary": "adzuna_field_not_dictionary",
+            "adzuna_field_salary_is_predicted_not_boolean": "adzuna_field_salary_is_predicted_not_boolean",
+            "adzuna_field_not_number": "adzuna_field_not_number",
 
         }
     }

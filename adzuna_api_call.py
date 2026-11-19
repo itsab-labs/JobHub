@@ -1,9 +1,12 @@
 """
-Datei: main.py
+Datei: adzuna_api_call.py
 
-Status: Version 0.1 pre alpha :-)
+Status: Version 0.1 alpha :-)
 
 Does: Adzuna API Calls
+
+Offene ToDos:
+- große funktion etwas entschlacken
 """
 # packages from the python universe :-) ----------
 import os
@@ -64,8 +67,9 @@ def search_jobs_adzuna():
         params["sort_by"] = SORT_BY
     if MAX_DAYS_OLD is not None:
         params["max_days_old"] = MAX_DAYS_OLD
-    if COMPANY is not None:
-        params["company"] = COMPANY
+    # auskommentiert, da company aktuell fehler wirft - selbst auf testseite von adzuna selbst
+    # if COMPANY is not None:
+    #     params["company"] = COMPANY
     if WHAT_EXCLUDE is not None:
         params["what_exclude"] = WHAT_EXCLUDE
 
@@ -88,8 +92,8 @@ def search_jobs_adzuna():
             error_data = error.response.json()
         except ValueError:
             error_data = None
-            JobHubError(source="adzuna", code="adzuna_non_valid_json")
             print(error.response.text[:1500], file=sys.stderr)
+            raise JobHubError(source="adzuna", code="adzuna_non_valid_json")
 
         if isinstance(error_data, dict):
             print("JSON keys:", list(error_data), file=sys.stderr)
@@ -100,17 +104,15 @@ def search_jobs_adzuna():
             print(f"doc: {documentation!r}", file=sys.stderr)
             print(f"exception: {exception!r}", file=sys.stderr)
 
-        raise JobHubError(
-            source="adzuna", code=status,
-        )
+        raise JobHubError(source="adzuna", code=status)
 
     except requests.exceptions.RequestException:
         raise JobHubError(source="adzuna", code="request_failed_or_non_valid")
 
-    except ValueError as error: #noch in JobHubError aufnehmen
-        raise SystemExit(str(error)) from error
-
-    data = response.json()
+    try:
+        data = response.json()
+    except requests.exceptions.JSONDecodeError as error:
+        raise JobHubError(source="adzuna", code="adzuna_non_valid_json") from error
 
     if not isinstance(data, dict) or not isinstance(data.get("results"), list):
         raise JobHubError(source="adzuna", code="api_repsonse_not_valid_list_of_jobs")
@@ -151,7 +153,7 @@ def get_text(data, key, *, required=False):
 
     if value is None:
         if required:
-            raise ValueError(f"Required field '{key}' missing.") #noch übersetzen
+            raise JobHubError(source="adzuna", code="adzuna_required_field_missing", field=key)
         return None
 
     if not isinstance(value, str):
@@ -174,13 +176,13 @@ def get_object(data, key):
         return {}
 
     if not isinstance(value, dict):
-        raise ValueError(f"Field '{key}' needs to be in the dictionary format.") #noch übersetzen
+        raise JobHubError(source="adzuna", code="adzuna_field_not_dictionary", field=key)
 
     return value
 
 #-----------------------------------------
 def get_prediction_flag(data):
-    value = data.get("salary_is_predicted") #noch übersetzen
+    value = data.get("salary_is_predicted")
 
     if value is None:
         return None
@@ -191,7 +193,7 @@ def get_prediction_flag(data):
         if value in ("1", 1):
             return True
 
-    raise ValueError("Field 'salary_is_predicted' has to contain 0 or 1.") #noch übersetzen
+    raise JobHubError(source="adzuna", code="adzuna_field_salary_is_predicted_not_boolean")
 
 #-----------------------------------------
 def get_number(data, key):
@@ -201,6 +203,6 @@ def get_number(data, key):
         return None
 
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(f"Field '{key}' needs to be a number.") #noch übersetzen
+        raise JobHubError(source="adzuna", code="adzuna_field_not_number", field=key)
 
     return value
