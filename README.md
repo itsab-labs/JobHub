@@ -6,6 +6,12 @@ The long-term plan is to store results in a database, identify duplicate listing
 
 The project is currently at an early stage. These features are future plans; the initial focus is on retrieving listings from a single API and building a small, working foundation.
 
+#necessary
+python version >= 3.12 (because of the f-strings usage with double "" included)
+
+
+
+
 ## Development setup
 
 Use a project-specific Python virtual environment and activate it before running:
