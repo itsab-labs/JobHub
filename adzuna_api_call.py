@@ -20,58 +20,44 @@ from errors import JobHubError
 
 
 
-from config import (
-    JOB_SEARCHED,
-    COUNTRY,
-    RESULTS_PER_PAGE,
-    LOCATION,
-    DISTANCE_KM,
-    SALARY_MIN,
-    FULL_TIME_ONLY,
-    SORT_BY,
-    MAX_DAYS_OLD,
-    COMPANY,
-    WHAT_EXCLUDE,
-)
+from config import RESULTS_PER_PAGE
 
 
 # .env neben dieser Python-Datei laden.
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 #-----------------------------------------
-def search_jobs_adzuna():
+def search_jobs_adzuna(args):
     app_id = os.getenv("ADZUNA_APP_ID")
     app_key = os.getenv("ADZUNA_APP_KEY")
 
     if not app_id or not app_key:
         raise JobHubError(source="adzuna", code="missing_credentials")
 
-    url = f"https://api.adzuna.com/v1/api/jobs/{COUNTRY}/search/1"
+    url = f"https://api.adzuna.com/v1/api/jobs/{args.country}/search/1"
 
     params = {
         "app_id": app_id,
         "app_key": app_key,
-        "what": JOB_SEARCHED,
+        "what": args.jobs,
         "results_per_page": RESULTS_PER_PAGE
     }
 
-    if LOCATION:
-        params["where"] = LOCATION
-        if DISTANCE_KM is not None:
-            params["distance"] = DISTANCE_KM
-    if SALARY_MIN is not None:
-        params["salary_min"] = SALARY_MIN
-    if FULL_TIME_ONLY:
+    if args.location:
+        params["where"] = args.location
+        if args.distance is not None:
+            params["distance"] = args.distance
+    if args.salary_min is not None:
+        params["salary_min"] = args.salary_min
+    if args.full_time_only:
         params["full_time"] = "1"
-    if SORT_BY is not None:
-        params["sort_by"] = SORT_BY
-    if MAX_DAYS_OLD is not None:
-        params["max_days_old"] = MAX_DAYS_OLD
+    if args.max_days_old is not None:
+        params["max_days_old"] = args.max_days_old
     # auskommentiert, da company aktuell fehler wirft - selbst auf testseite von adzuna selbst
     # if COMPANY is not None:
     #     params["company"] = COMPANY
-    if WHAT_EXCLUDE is not None:
-        params["what_exclude"] = WHAT_EXCLUDE
+    if args.exclude is not None:
+        params["what_exclude"] = args.exclude
 
     try:
         response = requests.get(

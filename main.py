@@ -5,18 +5,25 @@ Status: Version 0.1 pre alpha :-)
 """
 
 # packages from the python universe :-) ----------
-# nothing yet
+import argparse
+from pathlib import Path
 
 # own modules ------------------------------------------
 from adzuna_api_call import search_jobs_adzuna
 from errors import JobHubError
 from translations import translate
-from config import JOB_SEARCHED, COUNTRY, LOCATION, SALARY_MIN, DISTANCE_KM, FULL_TIME_ONLY, SORT_BY, MAX_DAYS_OLD, COMPANY, WHAT_EXCLUDE
+#from config import JOB_SEARCHED, COUNTRY, LOCATION, SALARY_MIN, DISTANCE_KM, FULL_TIME_ONLY, SORT_BY, MAX_DAYS_OLD, COMPANY, WHAT_EXCLUDE
+import my_parser
 
 # main ---------------------------------------------------
 def main():
+    args = my_parser.parse_options()
+    print(args)
+
     try:
-        jobs = search_jobs_adzuna()
+        jobs = search_jobs_adzuna(
+            args
+        )
     except JobHubError as error:
         text = translate(error.message_key, **error.values)
         raise SystemExit(
@@ -24,10 +31,9 @@ def main():
         )
 
     print(translate("job_searched_criteria"))
-    print(f"{translate("job_title_searched")} {JOB_SEARCHED} | {translate("country")} {COUNTRY} | {translate("town")} {LOCATION} | {translate("salary")}  {SALARY_MIN} ")
-    print(f"{translate("distance_km")} {DISTANCE_KM} | {translate("salary_min")} {SALARY_MIN} | {translate("full_time_only")} {FULL_TIME_ONLY}")
-    print(f"{translate("sort_by")} {SORT_BY} | {translate("max_days_old")} {MAX_DAYS_OLD} | {translate("company")} {COMPANY}")
-    print(f"{translate("what_exclude")} {WHAT_EXCLUDE}")
+    print(f"{translate("job_title_searched")} {args.jobs} | {translate("country")} {args.country} | {translate("town")} {args.location}")
+    print(f"{translate("distance_km")} {args.distance} | {translate("salary_min")} {args.salary_min} | {translate("full_time_only")} {args.full_time_only}")
+    print(f"{translate("max_days_old")} {args.max_days_old} | {translate("what_exclude")} {args.exclude}")
     print()
 
     if not jobs:
