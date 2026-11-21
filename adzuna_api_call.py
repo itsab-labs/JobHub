@@ -79,7 +79,6 @@ def search_jobs_adzuna(args):
         except ValueError:
             error_data = None
             print(error.response.text[:1500], file=sys.stderr)
-            raise JobHubError(source="adzuna", code="adzuna_non_valid_json")
 
         if isinstance(error_data, dict):
             print("JSON keys:", list(error_data), file=sys.stderr)

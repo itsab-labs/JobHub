@@ -20,6 +20,5 @@ Use a project-specific Python virtual environment and activate it before running
 python -m pip install -r requirements.txt
 python -m pytest --version
 python main.py
+python main.py -h #in case you need help
 ```
-
-milestone 2: job retrieval is implemented as well as error handling

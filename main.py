@@ -3,22 +3,26 @@ Datei: main.py
 
 Status: Version 0.1 pre alpha :-)
 """
-
+import json
 # packages from the python universe :-) ----------
-import argparse
 from pathlib import Path
 
 # own modules ------------------------------------------
 from adzuna_api_call import search_jobs_adzuna
 from errors import JobHubError
 from translations import translate
-#from config import JOB_SEARCHED, COUNTRY, LOCATION, SALARY_MIN, DISTANCE_KM, FULL_TIME_ONLY, SORT_BY, MAX_DAYS_OLD, COMPANY, WHAT_EXCLUDE
 import my_parser
+from config import VORLAGE_COMPACT_FULL
 
 # main ---------------------------------------------------
 def main():
     args = my_parser.parse_options()
     print(args)
+
+    if args.create_job_template is not None:
+        filename = args.filename
+        write_template(args.create_job_template, filename)
+        return
 
     try:
         jobs = search_jobs_adzuna(
@@ -48,5 +52,15 @@ def main():
 
         print()  # Leerzeile zwischen den Jobs
 
+
+
+def write_template(template_type: str, filename: Path):
+    if template_type == "compact_full":
+        with filename.open("x", encoding="utf-8") as file:
+            json.dump(VORLAGE_COMPACT_FULL, file, indent=4, ensure_ascii=False)
+
+
+
+# muss IMMER ganz am Ende stehen - sonst erkennt python die ganzen anderen funktionen nicht
 if __name__ == '__main__':
     main()

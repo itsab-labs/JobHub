@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 # own modules ------------------------------------------
-#nothing yet
+from config import VORLAGE_COMPACT_FULL
 
 def parse_options(argv=None):
 
@@ -11,7 +11,7 @@ def parse_options(argv=None):
                                      epilog="Beispiel: python main.py --job Softwareentwickler",
                                      prog="JobHub (c) Basti xD")
 
-    input_group = parser.add_mutually_exclusive_group(required=True)
+    input_group_01 = parser.add_mutually_exclusive_group(required=True)
 
     parser.add_argument(
         "--version",
@@ -19,17 +19,31 @@ def parse_options(argv=None):
         version="%(prog)s v0.1"
     )
 
-    input_group.add_argument(
+    input_group_01.add_argument(
         "--jobs", "-j",
         type=str,
         metavar="JOB",
         help="jobdescription, e.g. --job 'DevOps'",
     )
-    input_group.add_argument(
+    input_group_01.add_argument(
         "--config",
         type=Path,
         metavar="config.json",
         help="Suchkriterien aus einer JSON-Datei laden.",
+    )
+    input_group_01.add_argument(
+        "--create_job_template",
+        help="Create a job template (json) to be read-in. different versions available",
+        nargs="?",
+        const="compact_full",
+        choices=("compact_full",),
+    )
+
+    parser.add_argument(
+        "--filename",
+        type=Path,
+        help="filename for the chosen template",
+        default="template.json",
     )
 
     parser.add_argument(
@@ -86,9 +100,12 @@ def parse_options(argv=None):
     options = parser.parse_args(argv)
 
     if options.distance is not None:
-        if options.town is None:
-            parser.error("--distance darf nur zusammen mit --town angegeben werden.")
+        if options.location is None:
+            parser.error("--distance darf nur zusammen mit --location angegeben werden.")
         if options.distance < 0:
             parser.error("--distance darf nicht negativ sein.")
+
+    if options.filename is not None and options.create_job_template is None:
+        parser.error("--filename requires --create_job_template.")
 
     return options
