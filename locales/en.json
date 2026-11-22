@@ -17,8 +17,9 @@
   "adzuna_required_field_is_empty": "Field '{field}' is required but is empty.",
   "adzuna_required_field_missing": "Field '{field}' is required but is missing.",
   "adzuna_field_not_dictionary": "Field '{field}' needs to be in the dictionary format.",
-  "adzuna_field_salary_is_predicted_not_boolean": "Field 'salary_is_predicted' needs to be a boolean value (0 or 1).",
+  "adzuna_field_salary_is_predicted_not_boolean": "Field 'salary_is_predicted' must contain 0 or 1.",
   "adzuna_field_not_number": "Field '{field}' needs to be a number.",
+  "adzuna_server_error": "The provider encountered a server error.",
 
   "__comment-002": "----- Translations for job output -----",
   "job_searched_criteria": "The following search criteria were used:",
@@ -33,6 +34,18 @@
   "company": "Company:",
   "what_exclude": "What to exclude:",
   "job_title_searched": "Job title:",
-  "no_matching_jobs_found": "No matching jobs found."
+  "no_matching_jobs_found": "No matching jobs found.",
+
+  "__comment-003" : "--- translation for json errors -------",
+  "json_config_not_object": "The search configuration must be a JSON object.",
+  "json_config_unknown_fields": "Unknown fields: {fields}.",
+  "json_config_missing_jobs": "The required 'jobs' field is missing or set to null.",
+  "json_config_invalid_text": "The '{field}' field must contain non-empty text.",
+  "json_config_invalid_country": "Invalid country code: '{country}'. Allowed codes: {allowed}.",
+  "json_config_invalid_integer": "The '{field}' field must be a non-negative integer or null.",
+  "json_config_invalid_boolean": "The '{field}' field must be true or false.",
+  "json_config_missing_location": "The 'distance' field can only be used with 'location'.",
+  "json_config_read_failed": "Could not read the file '{filename}'.",
+  "json_config_non_valid_json": "Invalid JSON in '{filename}' at line {line}, column {column}."
 
 }

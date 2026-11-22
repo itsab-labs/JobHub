@@ -6,14 +6,15 @@ Status: Version 0.1 pre alpha :-)
 import json
 # packages from the python universe :-) ----------
 from pathlib import Path
+from argparse import Namespace
 
 # own modules ------------------------------------------
 from adzuna_api_call import search_jobs_adzuna
 from errors import JobHubError
 from translations import translate
 import my_parser
-from config import VORLAGE_COMPACT_FULL
-from argparse import Namespace
+from config import VORLAGE_COMPACT_FULL, DEFAULT_COUNTRY, SUPPORTED_COUNTRIES, SEARCH_DEFAULTS
+from json_config import load_search_config
 
 # main ---------------------------------------------------
 def main():
@@ -21,32 +22,20 @@ def main():
     print(f"arguments delivered: {args}\n")
 
     if args.create_job_template is not None:
-        filename = args.filename
+        filename = args.filename or Path("template_generated.json")
         write_template(args.create_job_template, filename)
         return
 
-    if args.load_config_file is not None:
-        filename = args.load_config_file
-        with open(filename, "r", encoding="utf-8") as file:
-            config = json.load(file)
-        print(f"parsing after load_config_file: {config}"), print()
-        args = Namespace(**config)
-        print(f"arguments after config loading: {args}"), print()
-
-
-    #return #nur für testzwecke um keine api calls zu verbrauchen
-
-
-
     try:
-        jobs = search_jobs_adzuna(
-            args
-        )
+        if args.load_config_file is not None:
+            config = load_search_config(args.load_config_file)
+            args = Namespace(**config)
+
+        jobs = search_jobs_adzuna(args)
+
     except JobHubError as error:
         text = translate(error.message_key, **error.values)
-        raise SystemExit(
-            f"{error.source}: {text} [{error.code}]"
-        )
+        raise SystemExit(f"{error.source}: {text} [{error.code}]")
 
     print(translate("job_searched_criteria"))
     print(f"{translate("job_title_searched")} {args.jobs} | {translate("country")} {args.country} | {translate("town")} {args.location}")
@@ -64,16 +53,11 @@ def main():
         print(job["url"])
         print()
 
-        print()  # Leerzeile zwischen den Jobs
-
-
 
 def write_template(template_type: str, filename: Path):
     if template_type == "compact_full":
         with filename.open("x", encoding="utf-8") as file:
             json.dump(VORLAGE_COMPACT_FULL, file, indent=4, ensure_ascii=False)
-
-
 
 # muss IMMER ganz am Ende stehen - sonst erkennt python die ganzen anderen funktionen nicht
 if __name__ == '__main__':

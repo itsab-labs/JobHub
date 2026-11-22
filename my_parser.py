@@ -1,10 +1,9 @@
 # packages from the python universe :-) ----------
 import argparse
 from pathlib import Path
-import sys
 
 # own modules ------------------------------------------
-from config import VORLAGE_COMPACT_FULL
+# nothing
 
 def parse_options(argv=None):
 
@@ -72,7 +71,7 @@ def parse_options(argv=None):
     parser.add_argument(
         "--country", "-c",
         type=str,
-        choices=("at", "de", "fr", "es", "it", "gb"), #longterm: gb, us, au, be, br, ca, ch, in, mx, nl, nz, pl, sg, za
+        choices=("at", "de", "fr", "es", "it", "gb", "us", "au", "be", "br", "ca", "ch", "in", "mx", "nl", "nz", "pl", "sg", "za"),
         default="at",
         help="Country to search for jobs, e.g. --country at",
     )
@@ -105,7 +104,10 @@ def parse_options(argv=None):
         if options.distance < 0:
             parser.error("--distance darf nicht negativ sein.")
 
-    if options.filename is not None and options.create_job_template is None:
-        parser.error("--filename requires --create_job_template.")
+    if options.filename is None and options.create_job_template is not None:
+        parser.error("--create_job_template requires --filename.")
 
     return options
+
+def parse_config_file_content(config) -> bool:
+    pass

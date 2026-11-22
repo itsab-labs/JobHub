@@ -34,5 +34,17 @@
   "company": "Unternehmen:",
   "what_exclude": "Was ausgeschlossen wurde (keywords):",
   "job_title_searched": "Jobtitel:",
-  "no_matching_jobs_found": "Keine passenden Job-Angebote gefunden."
+  "no_matching_jobs_found": "Keine passenden Job-Angebote gefunden.",
+
+  "__comment-003" : "------ JSON Config errors ----------",
+  "json_config_not_object": "Die Suchkonfiguration muss ein JSON-Objekt sein.",
+  "json_config_unknown_fields": "Unbekannte Felder: {fields}.",
+  "json_config_missing_jobs": "Das Pflichtfeld 'jobs' fehlt oder ist null.",
+  "json_config_invalid_text": "Das Feld '{field}' muss einen nicht leeren Text enthalten.",
+  "json_config_invalid_country": "Ungültiger Ländercode: '{country}'. Erlaubt: {allowed}.",
+  "json_config_invalid_integer": "Das Feld '{field}' muss eine ganze Zahl ab 0 oder null sein.",
+  "json_config_invalid_boolean": "Das Feld '{field}' muss true oder false sein.",
+  "json_config_missing_location": "Das Feld 'distance' kann nur zusammen mit 'location' verwendet werden.",
+  "json_config_read_failed": "Die Datei '{filename}' konnte nicht gelesen werden.",
+  "json_config_non_valid_json": "Ungültiges JSON in '{filename}', Zeile {line}, Spalte {column}."
 }

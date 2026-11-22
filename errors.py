@@ -21,6 +21,19 @@ class JobHubError(Exception):
             "adzuna_field_salary_is_predicted_not_boolean": "adzuna_field_salary_is_predicted_not_boolean",
             "adzuna_field_not_number": "adzuna_field_not_number",
 
+        },
+        "json_config": {
+            "json_config_non_valid_json": "json_config_non_valid_json",
+            "json_config_read_failed": "json_config_read_failed",
+            "json_config_invalid_country": "json_config_invalid_country",
+            "json_config_missing_jobs": "json_config_missing_jobs",
+            "json_config_missing_location": "json_config_missing_location",
+            "json_config_invalid_text": "json_config_invalid_text",
+            "json_config_not_object": "json_config_not_object",
+            "json_config_unknown_fields": "json_config_unknown_fields",
+            "json_config_invalid_integer": "json_config_invalid_integer",
+            "json_config_invalid_boolean": "json_config_invalid_boolean",
+
         }
     }
 
