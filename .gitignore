@@ -1,6 +1,7 @@
 #project specific:
 *.json
 !locales/*.json
+!testfile_config.json
 ToDos.md
 
 # Byte-compiled / optimized / DLL files

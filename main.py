@@ -13,16 +13,30 @@ from errors import JobHubError
 from translations import translate
 import my_parser
 from config import VORLAGE_COMPACT_FULL
+from argparse import Namespace
 
 # main ---------------------------------------------------
 def main():
     args = my_parser.parse_options()
-    print(args)
+    print(f"arguments delivered: {args}\n")
 
     if args.create_job_template is not None:
         filename = args.filename
         write_template(args.create_job_template, filename)
         return
+
+    if args.load_config_file is not None:
+        filename = args.load_config_file
+        with open(filename, "r", encoding="utf-8") as file:
+            config = json.load(file)
+        print(f"parsing after load_config_file: {config}"), print()
+        args = Namespace(**config)
+        print(f"arguments after config loading: {args}"), print()
+
+
+    #return #nur für testzwecke um keine api calls zu verbrauchen
+
+
 
     try:
         jobs = search_jobs_adzuna(

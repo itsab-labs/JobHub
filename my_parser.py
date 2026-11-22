@@ -1,6 +1,7 @@
 # packages from the python universe :-) ----------
 import argparse
 from pathlib import Path
+import sys
 
 # own modules ------------------------------------------
 from config import VORLAGE_COMPACT_FULL
@@ -26,13 +27,13 @@ def parse_options(argv=None):
         help="jobdescription, e.g. --job 'DevOps'",
     )
     input_group_01.add_argument(
-        "--config",
+        "--load_config_file", "--lcf",
         type=Path,
         metavar="config.json",
         help="Suchkriterien aus einer JSON-Datei laden.",
     )
     input_group_01.add_argument(
-        "--create_job_template",
+        "--create_job_template", "--cjt",
         help="Create a job template (json) to be read-in. different versions available",
         nargs="?",
         const="compact_full",
@@ -42,8 +43,7 @@ def parse_options(argv=None):
     parser.add_argument(
         "--filename",
         type=Path,
-        help="filename for the chosen template",
-        default="template.json",
+        help="filename for the chosen template"
     )
 
     parser.add_argument(
